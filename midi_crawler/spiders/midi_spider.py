@@ -27,7 +27,8 @@ class MidiSpider(scrapy.Spider):
         },
 
         'ITEM_PIPELINES': {
-            'midi_crawler.pipelines.YamlWriterPipeline': 1
+            'midi_crawler.pipelines.YamlWriterPipeline': 1,
+            'midi_crawler.pipelines.ContentWriterPipeline': 2
         },
 
         'JOBDIR': "persist"
@@ -45,8 +46,7 @@ class MidiSpider(scrapy.Spider):
 
     def parse(self, response):
         if is_midi_file(file_bytes=response.body):
-            file_type = "midi"
-            midi_item = MidiMeta(name=file_type, content=response.body, url=response.url)
+            midi_item = MidiMeta(name=response.url.split('/')[-1], content=response.body, url=response.url)
             yield midi_item
 
         else:
